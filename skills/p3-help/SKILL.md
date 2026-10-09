@@ -31,7 +31,7 @@ If cost is the worry, say where the tokens go and how to spend fewer. p3-stack s
 
 `/p3-mode` matches the task to a playbook, copies the playbook's steps into the todo list, and runs the other skills as the steps need them. A step it skips stays in the list as `skip: <reason>`. A good prompt states the goal and how to tell it's done. It doesn't list skills, because a hand-written sequence tends to drop or reorder steps the playbook would keep.
 
-`/p3-mode` stays on for the rest of the thread, through compaction and resume, until the user sends `/p3-mode off`. A new thread starts without it. Mid-chat, "new task" makes the mode match a fresh playbook. `/p3-mode` already uses `agents/p3-agent.md` for the delegates its playbook steps spawn. To get the same style from a delegate of your own, open its brief with `agents/p3-agent.md`.
+`/p3-mode` stays on for the rest of the thread, through compaction and resume, until the user sends `/p3-mode off`. A new thread starts without it. Mid-chat, "new task" makes the mode match a fresh playbook. `/p3-mode` already uses `agents/p3-agent.md` for the delegates its playbook steps spawn. To get the same style from a delegate of your own, make the brief's first line `Read <absolute path>/agents/p3-agent.md and follow it.` The hooks then keep that delegate in role for its whole session.
 
 ## Pick a skill
 

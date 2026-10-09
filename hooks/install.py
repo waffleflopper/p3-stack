@@ -22,6 +22,7 @@ DRIVERS = {
 EVENTS = {
     "SessionStart": {"matcher": "compact"},
     "UserPromptSubmit": {},
+    "SubagentStart": {},
 }
 
 
