@@ -23,6 +23,10 @@ COMPACT = (
     "p3-mode is active for this session and the context was just compacted. Read "
     f"{ROOT}/skills/p3-mode/SKILL.md in full before your next step, then continue under it."
 )
+ACTIVATE = (
+    "p3-mode is now active for this session. Unless the p3-mode skill is already loaded this turn, read "
+    f"{ROOT}/skills/p3-mode/SKILL.md in full and apply it to this request."
+)
 OFF = "p3-mode is off for this session. Acknowledge in one line and stop applying the p3-mode skill."
 AGENT_FILE = f"{ROOT}/agents/p3-agent.md"
 AGENT = (
@@ -47,8 +51,8 @@ TABLE = {
     ("UserPromptSubmit", "off", ROLE_NONE): (ROLE_NONE, OFF),
     ("UserPromptSubmit", "off", ROLE_MODE): (ROLE_NONE, OFF),
     ("UserPromptSubmit", "off", ROLE_AGENT): (ROLE_NONE, OFF),
-    ("UserPromptSubmit", "activate", ROLE_NONE): (ROLE_MODE, None),
-    ("UserPromptSubmit", "activate", ROLE_MODE): (ROLE_MODE, None),
+    ("UserPromptSubmit", "activate", ROLE_NONE): (ROLE_MODE, ACTIVATE),
+    ("UserPromptSubmit", "activate", ROLE_MODE): (ROLE_MODE, ACTIVATE),
     ("UserPromptSubmit", "activate", ROLE_AGENT): (ROLE_AGENT, AGENT_REMINDER),
     ("UserPromptSubmit", "agent", ROLE_NONE): (ROLE_AGENT, AGENT),
     ("UserPromptSubmit", "agent", ROLE_MODE): (ROLE_MODE, REMINDER),
