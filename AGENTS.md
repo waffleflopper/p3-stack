@@ -51,6 +51,9 @@ Keep these names exactly.
 - `skills/<name>/SKILL.md` is a skill. `skills/principle-*/SKILL.md` are the short principles.
 - `skills/p3-mode/SKILL.md` is the mode router; its playbooks live in `skills/p3-mode/playbooks/`.
 - `agents/` holds prompt briefs for delegated roles (`p3-agent.md`, `comment-sicko.md`), not harness agent definitions.
+- `skills/p3-mode/scripts/` holds the levers playbooks run: `check-plan.mjs` (multi-phase plan lint) and `worktree-audit.sh` (read-only worktree audit).
+- `docs/guide/` is the user guide, ported page for page from pstack's.
+- `tests/` runs with `python3 -I tests/<file>.py`.
 
 ## T3 tool quick reference
 
