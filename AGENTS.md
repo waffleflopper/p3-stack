@@ -24,7 +24,8 @@ If you are a delegated worker, your brief names exactly one file. Write only tha
 | `control-ui`, `control-cli` (from cursor-team-kit) | `preview_*` browser tools and `device_*` simulator tools; `preview_recording_start`/`preview_recording_stop` and `device_screenshot` for evidence; `browser.preview` shows a file to the user. |
 | `~/.cursor/rules/pstack-models.mdc`, `/add-plugin` | `setup-p3` writes `p3-models.md`; install is a symlink of `skills/*` into `~/.agents/skills/` (see README). |
 | `poteto-mode`, `poteto-agent`, `poteto-help`, `setup-pstack` | `p3-mode`, `agents/p3-agent.md`, `p3-help`, `setup-p3`. |
-| Cursor custom modes ("press option+enter") | Skills are invoked by name (`/p3-mode`). No mode toggles. |
+| Cursor custom modes ("press option+enter"), the `reminder:` field | `/p3-mode` is sticky per provider session. `install.sh` installs `hooks/p3-mode-hook.py` into every enabled Claude and Codex instance in T3's provider settings; it re-injects the reminder each turn and the skill after compaction. `/p3-mode off` ends it. |
+| pstack-for-codex's `SubagentStart` hook for `pstack-poteto-agent` | The same hook marks a `delegate_task` child as a p3 worker when its brief opens with `Read .../agents/p3-agent.md`, and gives native subagents of a p3 session the same brief through `SubagentStart`. |
 
 Everything else in pstack transfers as written: the principles, the playbook shapes, the brief template, the reply style, the autonomy rules. Adopt it.
 
