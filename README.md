@@ -26,9 +26,11 @@ The script also installs the mode hooks into each enabled Claude and Codex insta
 
 ## Get started
 
-1. Run `/setup-p3`. It reads `orchestrator_capabilities` and writes `p3-models.md`, mapping each role (code, judgment, the review panels) to a provider and model you actually have.
+1. Run `/setup-p3`. It asks which models and reasoning levels you want p3-stack to use, resolves them against `orchestrator_capabilities`, and maps each role (code, judgment, the review panels) to one of them. It writes `p3-models.md` to the project root or `~/.agents/p3-models.md`. Every skill reads the project file first.
 2. Use `/p3-mode` whenever you want rigorous work. It reads the request, picks a playbook, and runs the other skills as the steps need them. It stays on for the rest of the thread, through compaction and resume, until you send `/p3-mode off`.
 3. Stuck or unsure which skill fits? Ask `/p3-help`.
+
+The [guide](docs/guide/README.md) walks through setup, the mode, and each skill family, with recipes and pitfalls.
 
 ## The mode
 

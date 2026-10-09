@@ -1,6 +1,7 @@
 ---
 name: p3-help
-description: Guides users through p3-stack setup, /p3-mode, and picking the skill, playbook, or principle for a task. Use for /p3-help, or when the user asks how to install, set up, or use p3-stack, or which p3-stack skill fits. Not for requests to do work, even ones that name p3-stack.
+description: Guides users through p3-stack setup, /p3-mode, and picking the skill, playbook, or principle for a task. Type /p3-help with a question.
+disable-model-invocation: true
 ---
 
 # P3 help
@@ -9,27 +10,32 @@ Answer the user's question about p3-stack, hand them a prompt they can send, and
 
 A message that asks for work, such as "use p3-stack to fix this bug", is not a help question. Read [`p3-mode`](../p3-mode/SKILL.md), do the work under it, and mention once that invoking `/p3-mode` keeps the work in this style.
 
-This file maps questions to the skills and playbooks that hold the answers. Those files own the details. Read the file you route to before you quote it, and trust it when it disagrees with this map. The links here are repo-relative, so give the user the file's public copy: `https://github.com/waffleflopper/p3-stack/blob/main/` followed by its path.
+This file maps questions to the skills and guide pages that hold the answers. Those files own the details. Read the file you route to before you quote it, and trust it when it disagrees with this map. The links here are repo-relative, so give the user the file's public copy: `https://github.com/waffleflopper/p3-stack/blob/main/` followed by its path.
 
 ## Find out what they need
 
 Infer the need from the message and the conversation. A named situation, such as "which skill reviews a PR?", goes straight to its section. If the need is still unclear, ask one multiple-choice question with these options, then answer only the section they pick: get set up, start a task with `/p3-mode`, pick a skill for a situation, fix a run that went wrong, or make p3-stack my own.
 
-Check the state that changes the answer, and mention it only when it does. No `p3-models.md` means `/setup-p3` hasn't run for this user, so every role uses its default model. No `verify-*` skill or other app harness in the project means agents have no scripted way to drive the app; mention `/create-verification-skill` when the question is about proving a change works.
+Check the state that changes the answer, and mention it only when it does. No `p3-models.md` in the project root or at `~/.agents/p3-models.md` means `/setup-p3` hasn't run for this user, so every role uses its default model. No `verify-*` skill or other app harness in the project means agents have no scripted way to drive the app; mention `/create-verification-skill` when the question is about proving a change works.
+
+When the model file is missing and it matters, ask whether the user wants to pick the models p3-stack uses now. It matters when the user is new, the question is about setup or cost, or the answer depends on which models run. Ask at most once per session. If the need is also unclear, ask both questions together. Offer two choices:
+
+- Now: give them `/setup-p3` to type, and answer their question too.
+- Later: answer their question, and add one line saying every role keeps its default model until they run `/setup-p3`.
 
 ## Get set up
 
 1. Install by cloning the repo and running `./install.sh`. It links every skill into `~/.agents/skills/` and each Claude config dir, and installs the hooks that keep `/p3-mode` on in every enabled Claude and Codex instance; `./install.sh --project /path/to/repo` targets a project's `.agents/skills/` instead. Rerun it after adding a provider instance.
-2. Run [`/setup-p3`](../setup-p3/SKILL.md). It asks for a reasoning budget, maps a model to each role, and writes `p3-models.md`. The file applies to new sessions.
+2. Run [`/setup-p3`](../setup-p3/SKILL.md). It asks which models to use, each with a reasoning level, resolves them against `orchestrator_capabilities`, maps a role to each from that pool, and writes `p3-models.md` to the project root or `~/.agents/p3-models.md`. The file applies to new sessions.
 3. Start a real task with `/p3-mode`, a goal, and a check that can pass or fail.
 
-Installing changes nothing until the user invokes a skill. Only `/p3-help` loads from the user's words. The [README](../../README.md) has the details. Offer to word their first prompt with them.
+Installing changes nothing until the user invokes a skill. Only `/setup-p3` loads from the user's words. The [README](../../README.md) and [guide page 1](../../docs/guide/01-setup.md) have the details. Offer to word their first prompt with them, per [`references/prompting.md`](references/prompting.md).
 
-If cost is the worry, say where the tokens go and how to spend fewer. p3-stack spends extra tokens on subagents and review panels. Rerun `/setup-p3` and pick a smaller budget or cheaper models. A role set to `auto` or `inherit-parent` runs on the parent thread's model, which saves tokens when that model is cheaper. A shorter panel list runs fewer subagents, one for each entry. Save `/p3-mode` for work that needs rigor.
+If cost is the worry, say where the tokens go and how to spend fewer. p3-stack spends extra tokens on subagents and review panels. Rerun `/setup-p3` with cheaper models or lower reasoning levels in the pool. A role set to `auto` or `inherit-parent` runs on the parent thread's model, which saves tokens when that model is cheaper. A shorter panel list runs fewer subagents, one for each entry. Save `/p3-mode` for work that needs rigor.
 
 ## Start a task with `/p3-mode`
 
-`/p3-mode` matches the task to a playbook, copies the playbook's steps into the todo list, and runs the other skills as the steps need them. A step it skips stays in the list as `skip: <reason>`. A good prompt states the goal and how to tell it's done. It doesn't list skills, because a hand-written sequence tends to drop or reorder steps the playbook would keep.
+`/p3-mode` matches the task to a playbook, copies the playbook's steps into the todo list, and runs the other skills as the steps need them. A step it skips stays in the list as `skip: <reason>`. A good prompt states the goal and how to tell it's done. It doesn't list skills, because a hand-written sequence tends to drop or reorder steps the playbook would keep. Read [`references/prompting.md`](references/prompting.md) before you help word one. [Guide page 2](../../docs/guide/02-p3-mode.md) has examples.
 
 `/p3-mode` stays on for the rest of the thread, through compaction and resume, until the user sends `/p3-mode off`. A new thread starts without it. Mid-chat, "new task" makes the mode match a fresh playbook. `/p3-mode` already uses `agents/p3-agent.md` for the delegates its playbook steps spawn. To get the same style from a delegate of your own, make the brief's first line `Read <absolute path>/agents/p3-agent.md and follow it.` The hooks then keep that delegate in role for its whole session.
 
@@ -48,7 +54,7 @@ The default answer is `/p3-mode`, which runs most of the others when its steps n
 | Settle types and module shape before code that crosses a function boundary | [`/architect`](../architect/SKILL.md) |
 | Get several attempts at one brief, merged into the best one | [`/arena`](../arena/SKILL.md) |
 | Run parallel checks over slices, or race workers, as delegated child tasks | [`/swarm`](../swarm/SKILL.md) |
-| Have several models review a diff and try to break it | [`/interrogate`](../interrogate/SKILL.md) |
+| Have different models review a diff and try to break it | [`/interrogate`](../interrogate/SKILL.md) |
 | Fix a bug test-first when a cheap local test exists | [`/tdd`](../tdd/SKILL.md) |
 | Apply TypeScript rules to `.ts` or `.tsx` work | [`/typescript-best-practices`](../typescript-best-practices/SKILL.md) |
 | Strip comments before review, using a reviewer that didn't write them | [`/no-comments`](../no-comments/SKILL.md) |
@@ -60,7 +66,7 @@ The default answer is `/p3-mode`, which runs most of the others when its steps n
 | Vet a performance number before reporting or acting on it | [`/benchmark-checklist`](../benchmark-checklist/SKILL.md) |
 | Run a large or cross-cutting change, or one to review after stepping away | [`/figure-it-out`](../figure-it-out/SKILL.md) |
 | Keep a decision log during a run, and review it afterward | [`/show-me-your-work`](../show-me-your-work/SKILL.md) |
-| Pick a model for each role and a reasoning budget | [`/setup-p3`](../setup-p3/SKILL.md) |
+| Pick the models p3-stack uses and map one to each role | [`/setup-p3`](../setup-p3/SKILL.md) |
 | Turn their own working habits into a personal mode skill | [`/automate-me`](../automate-me/SKILL.md) |
 | Turn what a finished task taught into skill edits | [`/reflect`](../reflect/SKILL.md) |
 | Stop agents from repeating the same mistakes in this repo | [`/correct`](../correct/SKILL.md) |
@@ -78,7 +84,7 @@ Close calls:
 - `/recall` rebuilds context across recent threads. Resuming one specific thread, delegated task, or branch is the Session pickup playbook.
 - `/figure-it-out` designs one rigorous run. The Orchestrate playbook runs a program that spans days and many PRs. The Autonomous run playbook drives one task to a finish condition.
 
-**Not in p3-stack:** p3-stack has no `/orchestrate` skill. Orchestrate is a `/p3-mode` playbook.
+**Not in p3-stack:** p3-stack has no `/orchestrate` skill. Orchestrate is a `/p3-mode` playbook. If the slash menu shows `/orchestrate`, another plugin provides it.
 
 ## Playbooks and principles
 
@@ -88,9 +94,11 @@ Playbooks are step lists inside `/p3-mode`, not skills, so they aren't invoked b
 - "land the stack" runs Shipping. "take over this branch" runs Session pickup. "pause safely" runs Pause safely. "run the eval playbook" runs Eval.
 - "full autopilot on this queue" runs Autopilot-full. "stack them, don't ship" runs Autopilot-stack.
 
+[Guide page 6](../../docs/guide/06-verify-and-ship.md) covers opening, babysitting, and landing a PR.
+
 p3-stack has no planning skill. For work that spans phases or stacked PRs, asking `/p3-mode` for a plan runs the [Multi-phase plan playbook](../p3-mode/playbooks/multi-phase-plan.md), which writes the plan and doesn't implement it. For a design question, the Prototype playbook or `/architect` settles it in code first.
 
-Principles are one-rule skills that `/p3-mode` reads and cites in its replies. The user rarely invokes one. They steer with the names instead, as in "apply prove it works. show me the real output." Typing `/principle-<name>` still loads one on demand.
+Principles are one-rule skills that `/p3-mode` reads and cites in its replies. The user rarely invokes one. They steer with the names instead, as in "apply prove it works. show me the real output." Typing `/principle-<name>` still loads one on demand. [Guide page 8](../../docs/guide/08-principles.md) lists them.
 
 ## Fix a run that went wrong
 
@@ -98,18 +106,22 @@ Principles are one-rule skills that `/p3-mode` reads and cites in its replies. T
 |---|---|
 | The mode stopped applying after a few turns | The hooks aren't firing. Rerun `./install.sh` and start a new thread; a Codex instance added since the last install has no trusted hook yet. |
 | A question got treated as the next step of the last task | Say "new task", or say the turn doesn't need the mode. |
-| A new model choice had no effect | The file from `/setup-p3` applies to new sessions. Start one. |
+| A new model choice had no effect | `p3-models.md` (project root, else `~/.agents/p3-models.md`) applies to new sessions. Start one. |
 | Runs cost more than expected | See the cost paragraph under Get set up. |
-| A skill didn't load on its own | Only `/p3-help` loads from the user's words. The others load when the user invokes them by name or when `/p3-mode` runs them, and it doesn't run every skill. |
+| A skill didn't load on its own | Only `/setup-p3` loads from the user's words. They load when the user types them or when `/p3-mode` runs them, and it doesn't run every skill. |
 | Parallel agents overwrote each other | Give each worker its own worktree through `t3_thread_launch`, and keep one writer per worktree. |
-| An overnight run moved but finished nothing | It needs a check that can pass or fail, not a duration. |
+| An overnight run moved but finished nothing | It needs a check that can pass or fail, not a duration. See [guide page 7](../../docs/guide/07-overnight.md). |
 | The reply claims success from a green build | Ask for the real command, flow, stored value, or profile. That's the prove-it-works principle. |
+
+For a run that drifts, [`references/prompting.md`](references/prompting.md) has one-line steers. [Guide page 10](../../docs/guide/10-recipes-and-pitfalls.md) has more pitfalls and the recipes worth copying.
 
 ## Make p3-stack my own
 
 - [`/automate-me`](../automate-me/SKILL.md) drafts a personal mode skill from the user's own history, to use alongside `/p3-mode`. [`/reflect`](../reflect/SKILL.md) after a session turns its lessons into skill edits the user approves. `/p3-mode write a skill for <workflow>` runs the authoring playbook, and the eval playbook tests a skill change blind.
 - Fix a misbehaving skill in its own PR, not inside the feature work where it went wrong.
 
+[Guide page 9](../../docs/guide/09-make-it-yours.md) covers each of these.
+
 ## Reply
 
-Lead with the answer. Give at most one example prompt in a code block, then the link to that file. Keep it short unless the user asked for the whole map.
+Lead with the answer. Give at most one example prompt in a code block, adapted from [`references/recipes.md`](references/recipes.md) when one fits, then the link to that file. Keep it short unless the user asked for the whole map.
