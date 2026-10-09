@@ -19,7 +19,7 @@ Check the state that changes the answer, and mention it only when it does. No `p
 
 ## Get set up
 
-1. Install by cloning the repo and running `./install.sh`. It links every skill into `~/.agents/skills/`, where T3 Code reads skills; `./install.sh --project /path/to/repo` targets a project's `.agents/skills/` instead.
+1. Install by cloning the repo and running `./install.sh`. It links every skill into `~/.agents/skills/` and each Claude config dir, and installs the hooks that keep `/p3-mode` on in every enabled Claude and Codex instance; `./install.sh --project /path/to/repo` targets a project's `.agents/skills/` instead. Rerun it after adding a provider instance.
 2. Run [`/setup-p3`](../setup-p3/SKILL.md). It asks for a reasoning budget, maps a model to each role, and writes `p3-models.md`. The file applies to new sessions.
 3. Start a real task with `/p3-mode`, a goal, and a check that can pass or fail.
 
@@ -31,7 +31,7 @@ If cost is the worry, say where the tokens go and how to spend fewer. p3-stack s
 
 `/p3-mode` matches the task to a playbook, copies the playbook's steps into the todo list, and runs the other skills as the steps need them. A step it skips stays in the list as `skip: <reason>`. A good prompt states the goal and how to tell it's done. It doesn't list skills, because a hand-written sequence tends to drop or reorder steps the playbook would keep.
 
-Skills are invoked by name (`/p3-mode`). There are no mode toggles, so start each new task with `/p3-mode`. Mid-chat, "new task" makes the mode match a fresh playbook. `/p3-mode` already uses `agents/p3-agent.md` for the delegates its playbook steps spawn. To get the same style from a delegate of your own, open its brief with `agents/p3-agent.md`.
+`/p3-mode` stays on for the rest of the thread, through compaction and resume, until the user sends `/p3-mode off`. A new thread starts without it. Mid-chat, "new task" makes the mode match a fresh playbook. `/p3-mode` already uses `agents/p3-agent.md` for the delegates its playbook steps spawn. To get the same style from a delegate of your own, open its brief with `agents/p3-agent.md`.
 
 ## Pick a skill
 
@@ -96,7 +96,7 @@ Principles are one-rule skills that `/p3-mode` reads and cites in its replies. T
 
 | Symptom | Fix |
 |---|---|
-| The mode stopped applying after a few turns | Start each new task with `/p3-mode`; there's no mode to toggle on. |
+| The mode stopped applying after a few turns | The hooks aren't firing. Rerun `./install.sh` and start a new thread; a Codex instance added since the last install has no trusted hook yet. |
 | A question got treated as the next step of the last task | Say "new task", or say the turn doesn't need the mode. |
 | A new model choice had no effect | The file from `/setup-p3` applies to new sessions. Start one. |
 | Runs cost more than expected | See the cost paragraph under Get set up. |

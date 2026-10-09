@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # P3 mode
 
-Skills are invoked by name (`/p3-mode`). There are no mode toggles.
+`/p3-mode` stays on for the rest of the session. The provider hooks that `install.sh` installs remind you of it every turn and after compaction. Invoked as `/p3-mode off`, confirm in one line and stop applying it.
 
 ## Non-negotiables
 
