@@ -4,6 +4,8 @@ Editing code you don't understand is how subtle regressions ship, and that's as 
 
 p3-stack gives you four ways in. `/how` explains what the code does now. `/why` digs up the reasons it's shaped that way. `/teach` blends both into one explanation. `/recall` rebuilds your own recent context on a topic. Each one also makes the agent explain itself in words you can check. That's how you supervise an agent that may know the code better than you do.
 
+![Theo Browne studies a machine blueprint with a magnifying glass while robots fetch case files; the evidence board behind him links clues under /how and /why.](./images/understanding.jpg)
+
 ## Start with a read-only investigation
 
 When the cause is unclear, ask for findings, not a fix:

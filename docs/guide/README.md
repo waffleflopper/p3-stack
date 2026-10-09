@@ -2,7 +2,7 @@
 
 p3-stack works best when you stop micromanaging the agent. You describe what you want and how you'll know it's done. `/p3-mode` picks the playbook, runs the other skills as the steps need them, and shows you the evidence. This guide teaches that habit with realistic prompts.
 
-p3-stack adapts [pstack](https://github.com/cursor/plugins/tree/main/pstack) by Lauren Tan for T3 Code.
+p3-stack adapts [pstack](https://github.com/cursor/plugins/tree/main/pstack) by Lauren Tan for T3 Code. The illustrations are AI-generated reworks of pstack's guide art, with Theo Browne in the lead role.
 
 Here's what you'll learn:
 

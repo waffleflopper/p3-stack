@@ -4,6 +4,8 @@ One attempt at a hard design locks in the first shape the model thought of. `/ar
 
 The two most common design mistakes are taking the agent's first design and polishing a plan that no code has tested. This page fixes both. You plan through code: prototypes answer the open questions, a README or tutorial sets the target, and the written plan comes last.
 
+![Three robots draft competing bridge models at their own tables under /architect, /arena, and /interrogate panels, while Theo Browne and a judge robot with a clipboard inspect skeptically.](./images/design.jpg)
+
 Every panel on this page reads its models from a role line in `p3-models.md` (the project root, else `~/.agents/p3-models.md`), which [`/setup-p3`](../../skills/setup-p3/SKILL.md) writes. No skill hardcodes a model.
 
 ## Settle the shape with `/architect`

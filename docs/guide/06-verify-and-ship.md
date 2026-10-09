@@ -4,6 +4,8 @@
 
 Verification is the slowest step in most agent work, because it's the step that usually waits on a human. Make the agent able to do it, and you stop being the bottleneck. Skip it, and running more agents only gets you more unchecked work to review.
 
+![A prototype plane flies a real test course while Theo Browne times it with a stopwatch and robots film and checklist the run; the terminal reads verify: pass, evidence: captured.](./images/verification.jpg)
+
 ## State the finish condition up front
 
 Put what done means in the first prompt, in whatever words fit:
