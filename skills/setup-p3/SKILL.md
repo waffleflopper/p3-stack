@@ -1,65 +1,64 @@
 ---
 name: setup-p3
-description: Configure which models p3-stack uses per role and at what reasoning budget. Detects your available models and writes p3-models.md, which overrides the skill defaults. Use for /setup-p3, "configure p3 models", "p3 budget", or changing p3-stack's model choices.
-disable-model-invocation: true
+description: Configure which models p3-stack uses per role, drawn only from a pool of models you name. Resolves them against your available models and writes p3-models.md, which overrides the skill defaults. Use for /setup-p3, "configure p3 models", or changing p3-stack's model choices.
 ---
 
 # Setup p3
 
-Write `p3-models.md`, a file that sets p3-stack's model per role. Default location is the current project root. Offer `~/.agents/p3-models.md` as the global option, and ask which one. A project file wins over the global one.
+Write `p3-models.md`, a file that sets p3-stack's model per role. Ask whether it goes in the current project root or in `~/.agents/p3-models.md` (global). Every reader looks in the project root first, else the global file, so a project file wins.
 
 ## Steps
 
-### 1. Detect available models
+### 1. Load current state
 
-Call `orchestrator_capabilities`. It lists the providers and models you can pass to `delegate_task` in this session, custom models included, with each one's provider instance ID and any reasoning options. That is the only source. If it returns nothing, stop and tell the user. Never write a provider or model it did not return. `inherit-parent` is always valid even though it is not a detected model.
+The roles are the labels shown in step 5. If `p3-models.md` already exists at the chosen location, read it and treat its `# pool:` line and its role values as the current choices. A line whose role is not in step 5, such as `how critics`, is from a retired role. Drop it. Drop a `# budget:` line too.
 
-### 2. Load current state
+### 2. Ask for the pool
 
-The roles are the labels shown in step 5. If `p3-models.md` already exists at the chosen location, read it and treat its `# budget` line and its role values as the current choices. Otherwise start from the defaults in step 3(b). A line whose role is not in step 5, such as `how critics`, is from a retired role. Drop it.
+Ask plainly in the thread which models p3-stack may use, each with a reasoning level. For example: "Opus 5.5 High, GPT Sol 6.1 XHigh, Sonnet 5.5 High, DeepSeek V4.1 Flash Max". Plain names or exact ids are both fine. The same model at two reasoning levels is two pool entries. On a re-run, offer the recorded pool as the current answer. Every model this skill writes comes from this list. Never add, swap, or upgrade a model the user did not name.
 
-### 3. Budget, map, and confirm
+### 3. Resolve the pool
 
-**(a) Ask for a budget.** Ask plainly in the thread. Offer these four options with these exact labels, and name the current budget when the file records one.
+Call `orchestrator_capabilities`. It lists the provider instances and models you can pass to `delegate_task` in this session, custom models included, with each model's reasoning options. That is the only source. If it returns nothing, stop and tell the user. Resolve each entry to one provider instance, one model id, and one reasoning value.
 
-- `unlimited — keep max`
-- `large — xhigh reasoning`
-- `medium — high reasoning`
-- `small — medium reasoning`
+- **Version.** Match the version the user named exactly. "V4.1 Flash" never resolves to `V4 Flash`. A name that matches nothing, or matches several versions, gets asked about with the candidates listed.
+- **Instance.** One model can appear under several instances, such as GPT Sol under both `codex` and `opencode` (prefixed `openai/`). Prefer the maker's native instance over an aggregator, and say which you picked. Two instances of one provider, such as `claudeAgent` and a second Claude instance, are separate accounts and a real choice. Ask once and apply the answer to every entry from that provider.
+- **Reasoning.** The option id differs per provider (`effort`, `reasoningEffort`, `variant`), and so does the spelling of its values (`xhigh`, `Xhigh`). Match the level case-insensitively and write the value as the catalog spells it. If the model lacks the named level, flag it and list the levels it has. Never move it to a neighbor silently. A model with no reasoning options takes no effort token.
+- **Confirm.** Show the resolved pool in the entry format from step 5. Ask only about flagged entries.
 
-**(b) Apply it.** Build the working table. On a fresh run, give code roles (`feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`) and the explorer, investigator, and swarm roles the fastest strong coding model detected. Give `judgment and prose`, `hardest tasks`, the explainer, the synthesizers, and `reflect tooling` the most capable model detected. Fill each panel role with one entry per distinct provider detected, up to three. On a re-run, keep any role the user changed.
+### 4. Map roles and confirm
 
-When the catalog exposes reasoning options for a model, set each real entry's effort option from the budget: `unlimited` takes the highest option, and `large`, `medium`, and `small` take `xhigh`, `high`, or `medium`. The ladder is `max` > `xhigh` > `high` > `medium` > `low`. If the model does not expose the target, use the highest option at or below it, else mark the role as needing a choice. `inherit-parent` does not change. When the catalog exposes no reasoning options, map roles only and drop effort tokens; the budget label is still recorded.
+Fill every role from the pool alone. On a re-run, keep each role whose value is still in the pool. Otherwise recommend:
 
-**(c) Show the roles and confirm.** Show every role with its model, marking any entry not in the detected set as needing a choice. Also list each line step 2 dropped. Ask whether to accept as-is or change specific roles, offering the detected models plus `inherit-parent` (the role runs on the parent thread's model, so omit the model in `delegate_task`) as the options. For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one `delegate_task` runs per entry, `inherit-parent` entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena selects one value from it whose provider differs from the parent's when possible. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
+- `judgment and prose`, `hardest tasks`, `how explainer`, `why synthesizer`, `reflect judgment, divergent, synthesizer`: the strongest entry.
+- `feature, refactoring`, `bug-fix`, `perf-issue`, `hillclimb`, `how explorer`, `why investigators`, `swarm workers`, `reflect tooling`: the fast strong coder.
+- `arena runners`, `architect runners`, `interrogate reviewers`: one entry per distinct provider in the pool, up to three. The model's maker counts as the provider, so Opus and Sonnet are one. For `arena cross-judge pool`, favor providers the user does not usually run parent threads on, and keep at least two.
 
-### 4. Validate
+Show every role with its value, and list each line step 1 dropped. Ask whether to accept as-is or change specific roles, offering the pool entries plus `inherit-parent` (the role runs on the parent thread's model, so omit the model in `delegate_task`). For panel roles (arena runners, architect runners, interrogate reviewers) the value is a list, and one `delegate_task` runs per entry, `inherit-parent` entries included, so the list length sets the count. `arena cross-judge pool` is also a list, but Arena selects one value from it whose provider differs from the parent's when possible. `swarm workers` is the default model for every worker unless a race or comparison assigns another model per arm.
 
-Every real entry written must be in the `orchestrator_capabilities` result, under the provider instance it came from. `inherit-parent` always passes. If a chosen entry is not available, stop and ask again.
+### 5. Validate and write the file
 
-### 5. Write the file
-
-Write `p3-models.md` with a `# budget` line with the chosen label and its target effort, and one line per role, using the same labels p3-mode uses. Write each entry as `<providerInstanceId>/<model>`, followed by its effort option in parentheses when step 3(b) set one. Overwrite the whole file so re-runs stay idempotent. Shape:
+Every real entry written must be in the `orchestrator_capabilities` result, under the provider instance it resolved to, with a reasoning value that model exposes. `inherit-parent` always passes. If a chosen entry is not available, stop and ask again. Then write `p3-models.md` with a `# pool:` line listing the resolved pool entries, comma separated, and one line per role, using the same labels p3-mode uses. Write each entry as `<providerInstanceId>/<model> (<effort>)`, leaving off the effort when the model has no reasoning options. Overwrite the whole file so re-runs stay idempotent. Shape:
 
 ```
 # p3 model configuration. One line per role. Delete a line to fall back to the skill default.
 # `inherit-parent` as a value: the role runs on the parent thread's model (omit the delegate_task model). Entries in a panel list still count toward its fan-out.
-# budget: unlimited (max)
-feature, refactoring: <providerInstanceId>/<model> (<effort>)
-bug-fix: <providerInstanceId>/<model> (<effort>)
-perf-issue: <providerInstanceId>/<model> (<effort>)
-hillclimb: <providerInstanceId>/<model> (<effort>)
-judgment and prose: <providerInstanceId>/<model> (<effort>)
-hardest tasks: <providerInstanceId>/<model> (<effort>)
-how explorer: <providerInstanceId>/<model> (<effort>)
-how explainer: <providerInstanceId>/<model> (<effort>)
-why investigators: <providerInstanceId>/<model> (<effort>)
-why synthesizer: <providerInstanceId>/<model> (<effort>)
-reflect tooling: <providerInstanceId>/<model> (<effort>)
-reflect judgment, divergent, synthesizer: <providerInstanceId>/<model> (<effort>)
+# pool: <entry>, <entry>, <entry>
+feature, refactoring: <entry>
+bug-fix: <entry>
+perf-issue: <entry>
+hillclimb: <entry>
+judgment and prose: <entry>
+hardest tasks: <entry>
+how explorer: <entry>
+how explainer: <entry>
+why investigators: <entry>
+why synthesizer: <entry>
+reflect tooling: <entry>
+reflect judgment, divergent, synthesizer: <entry>
 arena runners: <entry>, <entry>, <entry>
-arena cross-judge pool: <entry>, <entry>, <entry>
-swarm workers: <providerInstanceId>/<model> (<effort>)
+arena cross-judge pool: <entry>, <entry>
+swarm workers: <entry>
 architect runners: <entry>, <entry>, <entry>
 interrogate reviewers: <entry>, <entry>, <entry>
 ```
