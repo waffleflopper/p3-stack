@@ -17,6 +17,10 @@ REMINDER = (
     "p3-mode is active for this session. New task? Playbook match or rigor needed -> "
     "apply the p3-mode skill. Casual turn or user opts out -> don't."
 )
+ACTIVATE = (
+    "p3-mode is now active for this session. Unless the p3-mode skill is already loaded this turn, read "
+    f"{os.path.join(ROOT, 'skills', 'p3-mode', 'SKILL.md')} in full and apply it to this request."
+)
 OFF = "p3-mode is off for this session. Acknowledge in one line and stop applying the p3-mode skill."
 AGENT_FILE = os.path.join(ROOT, "agents", "p3-agent.md")
 AGENT = (
@@ -70,7 +74,7 @@ class HookTest(unittest.TestCase):
     def test_activation_forms_make_session_sticky(self):
         for i, text in enumerate(["/p3-mode fix it", "$p3-mode fix it", "please $p3-mode", "[$p3-mode](skill://x) go"]):
             session = f"sticky-{i}"
-            self.assertIsNone(self.prompt(text, session))
+            self.assertEqual(self.prompt(text, session), output("UserPromptSubmit", ACTIVATE))
             self.assertEqual(self.prompt("now do the thing", session), output("UserPromptSubmit", REMINDER))
             self.assertIsNone(self.prompt("now do the thing", "other-" + session))
 
@@ -138,10 +142,10 @@ class HookTest(unittest.TestCase):
             self.assertIsNone(self.prompt(text, f"loose-{i}"))
         self.assertEqual(len(self.state_files()), 2)
 
-    def test_activate_from_none_is_silent_and_mode(self):
-        self.assertIsNone(self.prompt("/p3-mode go"))
+    def test_activate_points_at_the_skill_file(self):
+        self.assertEqual(self.prompt("/p3-mode go"), output("UserPromptSubmit", ACTIVATE))
         self.assertEqual(list(self.state_files().values()), ["mode"])
-        self.assertIsNone(self.prompt("/p3-mode go"))
+        self.assertEqual(self.prompt("/p3-mode go"), output("UserPromptSubmit", ACTIVATE))
         self.assertEqual(self.prompt("plain"), output("UserPromptSubmit", REMINDER))
 
     def test_subagent_start_follows_parent_role_without_touching_it(self):
