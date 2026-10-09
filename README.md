@@ -15,7 +15,7 @@ pstack is poteto's answer to AI slop code. It turns an agent into an engineering
 ## Install
 
 ```bash
-git clone https://github.com/uzairansaruzi/p3-stack.git
+git clone https://github.com/waffleflopper/p3-stack.git
 cd p3-stack
 ./install.sh
 ```

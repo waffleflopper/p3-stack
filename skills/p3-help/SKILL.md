@@ -9,7 +9,7 @@ Answer the user's question about p3-stack, hand them a prompt they can send, and
 
 A message that asks for work, such as "use p3-stack to fix this bug", is not a help question. Read [`p3-mode`](../p3-mode/SKILL.md), do the work under it, and mention once that invoking `/p3-mode` keeps the work in this style.
 
-This file maps questions to the skills and playbooks that hold the answers. Those files own the details. Read the file you route to before you quote it, and trust it when it disagrees with this map. The links here are repo-relative, so give the user the file's public copy: `https://github.com/uzairansaruzi/p3-stack/blob/main/` followed by its path.
+This file maps questions to the skills and playbooks that hold the answers. Those files own the details. Read the file you route to before you quote it, and trust it when it disagrees with this map. The links here are repo-relative, so give the user the file's public copy: `https://github.com/waffleflopper/p3-stack/blob/main/` followed by its path.
 
 ## Find out what they need
 
