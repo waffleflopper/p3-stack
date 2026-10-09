@@ -19,7 +19,7 @@ cd p3-stack
 ./install.sh
 ```
 
-`install.sh` links every `skills/*` directory into `~/.agents/skills/`, where T3 Code reads skills. Use `./install.sh --project /path/to/repo` to install into a project's `.agents/skills/` instead.
+`install.sh` links every `skills/*` directory into `~/.agents/skills/`, where Codex and most T3 Code providers read skills. Claude Code reads only `<config dir>/skills/`, so the script also reads T3 Code's provider settings and links into the config dir of every enabled Claude instance: its `homePath`, else `$CLAUDE_CONFIG_DIR`, else `~/.claude`. Rerun it after adding a Claude account. Use `./install.sh --project /path/to/repo` to install into a project's `.agents/skills/`, plus `.claude/skills/` when Claude is enabled.
 
 ## Get started
 
