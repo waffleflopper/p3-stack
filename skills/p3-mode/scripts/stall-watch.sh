@@ -10,8 +10,9 @@
 #
 # Lanes come from NAME=PATH arguments and from --lanes FILE (one "NAME PATH" per
 # line, re-read every cycle so the coordinator can add and drop lanes without a
-# restart). With --lanes, an empty set keeps watching; with only NAME=PATH
-# arguments, it exits 0.
+# restart). With --lanes, an empty set keeps watching and an unreadable file
+# reports as the lane "lanes-file"; with only NAME=PATH arguments, an empty set
+# exits 0.
 #
 # With P3_STALL_WEBHOOK set (a schedule_task webhook URL, kept out of argv), each
 # quiet spell POSTs {"stalled":"<names>"} once and the watcher keeps running;
@@ -41,8 +42,12 @@ declare -A reported=()
 read_lanes() {
 	local entry
 	for entry in "${arg_lanes[@]}"; do printf '%s %s\n' "${entry%%=*}" "${entry#*=}"; done
-	if [ -n "$lanes_file" ] && [ -r "$lanes_file" ]; then
-		grep -v '^[[:space:]]*\(#\|$\)' "$lanes_file"
+	if [ -n "$lanes_file" ]; then
+		if [ -r "$lanes_file" ]; then
+			grep -v '^[[:space:]]*\(#\|$\)' "$lanes_file"
+		else
+			printf '%s %s\n' lanes-file "$lanes_file"
+		fi
 	fi
 }
 
