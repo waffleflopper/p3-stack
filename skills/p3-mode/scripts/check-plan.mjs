@@ -18,7 +18,7 @@ const SUB_BLOCKS = [
 	"Merge.",
 ];
 const PROGRAM_H3 = ["Arm the program", "Spawn owners", "PR mechanics", "Verdict and merge", "Boot recipe"];
-const PROGRAM_MARKERS = ["git show origin/main:", "schedule_task", "status message", "link_pull_request"];
+const PROGRAM_MARKERS = ["git show origin/main:", "watch_pull_request", "status message", "link_pull_request"];
 const HOW_TO_READ_MARKERS = [
 	"One box is one unit of work",
 	"names the evidence",

@@ -36,10 +36,11 @@ Swap in the real paths, skills, and done checks. Informal wording works.
 - `/p3-mode open the pr. small ordered commits, evidence in the description.`
 - `/p3-mode babysit this pr. get it green.` It arms `watch_pull_request` and wakes on CI, comments, or conflicts. For status only: `/p3-mode check on pr <number>. anything outstanding?`
 - `/p3-mode land the stack.`
+- `/p3-mode find what makes the calendar lag when <action>, fix it, and $ship-it.` Reviews before pushing, clears the bots, starts CI, merges on green.
 
 ## Away and back
 
-- `/p3-mode im going to bed. <goal> in a fresh worktree off <base>. done means <checks>. keep a decision log. don't ask me before committing. keep going until done. if you're truly stuck after a few hours, stop and write up why.` The Autonomous run playbook wakes itself with `watch_pull_request` or `schedule_task`.
+- `/p3-mode im going to bed. <goal> in a fresh worktree off <base>. done means <checks>. keep a decision log. don't ask me before committing. keep going until done. if you're truly stuck after a few hours, stop and write up why.` The Autonomous run playbook wakes itself on events (`watch_pull_request`, a background command) and uses `schedule_task` only when no event exists.
 - `/show-me-your-work catch me up on what you did last night.` Read its Attention section first.
 - `/p3-mode full autopilot on this queue. each item is independent.`
 - `/p3-mode autopilot these changes but stack them, don't ship. i'll land the stack.`
