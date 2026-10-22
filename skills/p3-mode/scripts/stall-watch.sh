@@ -38,6 +38,7 @@ while [ $# -gt 0 ]; do
 done
 
 declare -A reported=()
+lanes_file_reported=
 
 read_lanes() {
 	local entry
@@ -54,6 +55,7 @@ active_since() {
 while :; do
 	cutoff=$(($(date +%s) - quiet * 60))
 	stalled=()
+	keys=()
 	seen=0
 	while read -r name path; do
 		[ -n "${name:-}" ] || continue
@@ -61,13 +63,14 @@ while :; do
 		if [ -e "$path" ] && active_since "$path" "$cutoff"; then
 			unset "reported[$name]"
 		elif [ -z "${reported[$name]:-}" ]; then
+			keys+=("$name")
 			if [ -e "$path" ]; then stalled+=("$name"); else stalled+=("$name(missing)"); fi
 		fi
 	done < <(read_lanes)
 	if [ -n "$lanes_file" ]; then
 		if [ -r "$lanes_file" ]; then
-			unset "reported[lanes-file]"
-		elif [ -z "${reported[lanes-file]:-}" ]; then
+			lanes_file_reported=
+		elif [ -z "$lanes_file_reported" ]; then
 			stalled+=("lanes-file(unreadable)")
 		fi
 	fi
@@ -80,7 +83,8 @@ while :; do
 		fi
 		body=$(printf '{"stalled":"%s","quietMinutes":%s}' "${stalled[*]}" "$quiet")
 		if curl -fsS -m 20 -H 'content-type: application/json' -d "$body" "$P3_STALL_WEBHOOK" >/dev/null; then
-			for name in "${stalled[@]}"; do reported[${name%%(*}]=1; done
+			for name in "${keys[@]}"; do reported[$name]=1; done
+			[ -n "$lanes_file" ] && [ ! -r "$lanes_file" ] && lanes_file_reported=1
 		else
 			echo "$(date -u +%FT%TZ) webhook post failed; retrying next cycle" >&2
 		fi
