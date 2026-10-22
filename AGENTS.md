@@ -17,7 +17,8 @@ If you are a delegated worker, your brief names exactly one file. Write only tha
 | "cloud agent", `environment: "cloud"`, `cloud_base_branch` | A delegated child task. Use `t3_thread_launch` only when the worker needs its own top-level thread, worktree, or branch. |
 | "each worker gets its own worktree or branch" | `t3_thread_launch` with `workspaceStrategy`: `{"type":"worktree","baseRef":...,"branch":...}`, `{"type":"existing_worktree","worktreePath":...}`, or `{"type":"root"}`. One writer per worktree. |
 | `/loop`, poll loops, `scripts/watch-pr` | `watch_pull_request`: T3 watches the PR and wakes the thread on checks finishing, new comments, or conflicts. Arm it, end the turn, triage on wake. For other cadences use `schedule_task`. |
-| Hourly audit ticks, recurring runs | `schedule_task` with `{"type":"interval","everyMs":...}` or `{"type":"fixed_time","timeOfDay":...,"weekdays":[...]}`; `run_scheduled_task_now` for an immediate run. |
+| Hourly audit ticks | Event wakes: async `delegate_task` completions, `watch_pull_request`, and `skills/p3-mode/scripts/stall-watch.sh` posting to a `schedule_task` webhook only when a lane goes quiet (orchestrate playbook, Wakes). |
+| Recurring runs | `schedule_task` with `{"type":"interval","everyMs":...}` or `{"type":"fixed_time","timeOfDay":...,"weekdays":[...]}`; `run_scheduled_task_now` for an immediate run. |
 | Stack bookkeeping with `gt`, manual PR lists | `link_pull_request` for every layer, immediately; `list_thread_pull_requests` returns the stack bottom to top. |
 | `agent-transcripts/*.jsonl` mining | `t3_thread_read`, `t3_thread_search`; `t3_queue_list`/`t3_queue_read`/`t3_queue_edit`/`t3_queue_reorder`/`t3_queue_cancel`/`t3_queue_promote_to_steer` for queued input. |
 | `AskQuestion` | Ask plainly in the thread. `t3_pending_request_list`/`t3_pending_request_read`/`t3_pending_request_respond` answer questions in other threads. |
@@ -51,7 +52,7 @@ Keep these names exactly.
 - `skills/<name>/SKILL.md` is a skill. `skills/principle-*/SKILL.md` are the short principles.
 - `skills/p3-mode/SKILL.md` is the mode router; its playbooks live in `skills/p3-mode/playbooks/`.
 - `agents/` holds prompt briefs for delegated roles (`p3-agent.md`, `comment-sicko.md`), not harness agent definitions.
-- `skills/p3-mode/scripts/` holds the levers playbooks run: `check-plan.mjs` (multi-phase plan lint) and `worktree-audit.sh` (read-only worktree audit).
+- `skills/p3-mode/scripts/` holds the levers playbooks run: `check-plan.mjs` (multi-phase plan lint) and `worktree-audit.sh` (read-only worktree audit) and `stall-watch.sh` (token-free stall detection for coordinators).
 - `docs/guide/` is the user guide, ported page for page from pstack's.
 - `tests/` runs with `python3 -I tests/<file>.py`.
 

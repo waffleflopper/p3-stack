@@ -7,7 +7,7 @@ pstack is poteto's answer to AI slop code. It turns an agent into an engineering
 - **Delegation.** `delegate_task` child agents replace Cursor's Task tool, with per-role providers and models resolved from `orchestrator_capabilities`. Cross-model panels are native.
 - **Worktrees.** `t3_thread_launch` binds a worker to its own worktree and branch. One writer per worktree, enforced by the app instead of by advice.
 - **Watching.** `watch_pull_request` wakes the thread when checks finish, someone comments, or the branch conflicts. No polling loops.
-- **Scheduling.** `schedule_task` runs audits and overnight cadences even when no turn is active. No `/loop`.
+- **Scheduling.** Coordinators wake on events: delegated-task completions, `watch_pull_request`, and a token-free stall watcher that calls a `schedule_task` webhook. `schedule_task` runs genuinely recurring work. No `/loop`.
 - **Memory.** `t3_thread_read` and `t3_thread_search` replace mining Cursor transcript files.
 - **Sticky mode.** Provider hooks keep `/p3-mode` on for the rest of a thread, the way Cursor's Custom Mode keeps pstack's mode on. T3 Code has no per-thread instructions, so `install.sh` adds the hooks to every Claude and Codex instance in T3's provider settings.
 - **Proof.** `preview_*` browser tools and `device_*` simulators replace external control skills. Screenshots and recordings land in the thread.
@@ -38,7 +38,7 @@ The [guide](docs/guide/README.md) walks through setup, the mode, and each skill 
 
 ## Skills
 
-architect, arena, automate-me, benchmark-checklist, blast-radius, bro, correct, create-verification-skill, figure-it-out, how, interrogate, maintain-verification-skill, make-bot-ui, no-comments, p3-help, recall, reflect, setup-p3, show-me-your-work, swarm, tdd, teach, technical-writing, typescript-best-practices, unslop, why.
+architect, arena, automate-me, benchmark-checklist, blast-radius, bro, correct, create-verification-skill, figure-it-out, how, interrogate, maintain-verification-skill, make-bot-ui, no-comments, p3-help, recall, reflect, setup-p3, ship-it, show-me-your-work, swarm, tdd, teach, technical-writing, typescript-best-practices, unslop, why.
 
 ## Principles
 

@@ -69,7 +69,7 @@ Before the skill hands back its summary, it audits the log against the thread wi
 
 ## When the night holds a queue, not a task
 
-The contract above drives one task to one finish condition. Some nights hold more, a queue of independent changes or a whole program. Three playbooks scale the same trust up. Each one arms an hourly audit tick with `schedule_task` on your go, so the run doesn't depend on the agent remembering to check.
+The contract above drives one task to one finish condition. Some nights hold more, a queue of independent changes or a whole program. Three playbooks scale the same trust up. Each one arms event wakes on your go: finished workers, PR changes, and a stall watcher that only calls in when a lane goes quiet. The run doesn't depend on the agent remembering to check, and a quiet night costs no tokens.
 
 [Autopilot-full](../../skills/p3-mode/playbooks/autopilot-full.md) runs a queue of independent PRs to merged. Each PR gets one owner, a `delegate_task` child that carries it from build through merge, and no owner merges on its own verdict. A swarm of fresh verifiers starts a round at the owner's code-ready head and again at every later push that changes the patch. Only a clean verdict on the patch that merges authorizes the merge:
 
