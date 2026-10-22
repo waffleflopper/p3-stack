@@ -10,7 +10,8 @@
 #
 # Lanes come from NAME=PATH arguments and from --lanes FILE (one "NAME PATH" per
 # line, re-read every cycle so the coordinator can add and drop lanes without a
-# restart). An empty lane set exits 0.
+# restart). With --lanes, an empty set keeps watching; with only NAME=PATH
+# arguments, it exits 0.
 #
 # With P3_STALL_WEBHOOK set (a schedule_task webhook URL, kept out of argv), each
 # quiet spell POSTs {"stalled":"<names>"} once and the watcher keeps running;
@@ -56,16 +57,14 @@ while :; do
 	while read -r name path; do
 		[ -n "${name:-}" ] || continue
 		seen=1
-		if [ ! -e "$path" ]; then
-			stalled+=("$name(missing)")
-		elif active_since "$path" "$cutoff"; then
+		if [ -e "$path" ] && active_since "$path" "$cutoff"; then
 			unset "reported[$name]"
 		elif [ -z "${reported[$name]:-}" ]; then
-			stalled+=("$name")
+			if [ -e "$path" ]; then stalled+=("$name"); else stalled+=("$name(missing)"); fi
 		fi
 	done < <(read_lanes)
 
-	[ "$seen" = 1 ] || exit 0
+	[ "$seen" = 1 ] || [ -n "$lanes_file" ] || exit 0
 	if [ "${#stalled[@]}" -gt 0 ]; then
 		if [ -z "${P3_STALL_WEBHOOK:-}" ]; then
 			printf 'quiet for %sm: %s\n' "$quiet" "${stalled[*]}"
