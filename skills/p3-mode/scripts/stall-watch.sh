@@ -56,6 +56,7 @@ while :; do
 	cutoff=$(($(date +%s) - quiet * 60))
 	stalled=()
 	keys=()
+	file_alert=
 	seen=0
 	while read -r name path; do
 		[ -n "${name:-}" ] || continue
@@ -72,6 +73,7 @@ while :; do
 			lanes_file_reported=
 		elif [ -z "$lanes_file_reported" ]; then
 			stalled+=("lanes-file(unreadable)")
+			file_alert=1
 		fi
 	fi
 
@@ -84,7 +86,7 @@ while :; do
 		body=$(printf '{"stalled":"%s","quietMinutes":%s}' "${stalled[*]}" "$quiet")
 		if curl -fsS -m 20 -H 'content-type: application/json' -d "$body" "$P3_STALL_WEBHOOK" >/dev/null; then
 			for name in "${keys[@]}"; do reported[$name]=1; done
-			[ -n "$lanes_file" ] && [ ! -r "$lanes_file" ] && lanes_file_reported=1
+			[ -n "$file_alert" ] && lanes_file_reported=1
 		else
 			echo "$(date -u +%FT%TZ) webhook post failed; retrying next cycle" >&2
 		fi
