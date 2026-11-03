@@ -47,19 +47,21 @@ one appears.
    that could. If you are on the default branch, create a branch first.
 2. **Prove it.** Get proof for every change you made. See "Proof".
 3. **Get feedback.** Use the `sol-loop` skill to verify changes.
-4. **File the PR** with the `file-pr` skill. Rebase onto the latest default
-   branch first. Add one short line to the description that says how you proved
-   the change.
-5. **Babysit the PR** with the `babysit-pr` skill. Fix real findings and CI
-   failures. Get proof for each fix before you push it.
+4. **File the PR** with steps 4 to 6 of the `ship-it` skill. Steps 1 to 3 of
+   `ship-it` are already covered by the steps above. Rebase onto the latest
+   default branch first. Add one short line to the description that says how
+   you proved the change.
+5. **Babysit the PR** with those same `ship-it` steps. Fix real findings and CI
+   failures. Get proof for each fix before you push it. When `ship-it` calls
+   for its step 2 reviewer on a fix push, run `sol-loop` on that fix.
 6. **Merge** when the merge gate passes.
 7. **Report** in your final message: the PR link, the merge commit, your proof,
    and each decision you made for the user.
 
 Stay active from step 1 to step 7. If you end your turn while checks or bots are
 pending, the work stops, because nobody will prompt you again. Wait with the
-watcher from `babysit-pr`, so something wakes you when the PR changes. In T3
-Code that is `watch_pull_request`. If you stop before the merge, call
+watcher from `ship-it` step 5, so something wakes you when the PR changes. In
+T3 Code that is `watch_pull_request`. If you stop before the merge, call
 `unwatch_pull_request` first.
 
 ## Proof
