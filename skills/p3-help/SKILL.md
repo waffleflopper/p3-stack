@@ -55,6 +55,7 @@ The default answer is `/p3-mode`, which runs most of the others when its steps n
 | Get several attempts at one brief, merged into the best one | [`/arena`](../arena/SKILL.md) |
 | Run parallel checks over slices, or race workers, as delegated child tasks | [`/swarm`](../swarm/SKILL.md) |
 | Have different models review a diff and try to break it | [`/interrogate`](../interrogate/SKILL.md) |
+| Loop a diff through GPT Sol review until it approves ("sol loop") | [`/sol-loop`](../sol-loop/SKILL.md) |
 | Fix a bug test-first when a cheap local test exists | [`/tdd`](../tdd/SKILL.md) |
 | Apply TypeScript rules to `.ts` or `.tsx` work | [`/typescript-best-practices`](../typescript-best-practices/SKILL.md) |
 | Strip comments before review, using a reviewer that didn't write them | [`/no-comments`](../no-comments/SKILL.md) |
@@ -65,6 +66,8 @@ The default answer is `/p3-mode`, which runs most of the others when its steps n
 | Bring a verification skill and its feature map back in line with the app | [`/maintain-verification-skill`](../maintain-verification-skill/SKILL.md) |
 | Find what to work on next, with a copy-paste prompt for each item | [`/whats-next`](../whats-next/SKILL.md) |
 | Take a finished change all the way to a merged PR without them | `$ship-it` / [`/ship-it`](../ship-it/SKILL.md) |
+| Take a change to a merged PR unattended ("full send") | [`/full-send`](../full-send/SKILL.md) |
+| Same as full send, but stop with the PR ready for them to merge ("full stop") | [`/full-stop`](../full-stop/SKILL.md) |
 | Vet a performance number before reporting or acting on it | [`/benchmark-checklist`](../benchmark-checklist/SKILL.md) |
 | Run a large or cross-cutting change, or one to review after stepping away | [`/figure-it-out`](../figure-it-out/SKILL.md) |
 | Keep a decision log during a run, and review it afterward | [`/show-me-your-work`](../show-me-your-work/SKILL.md) |

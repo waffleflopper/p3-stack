@@ -29,7 +29,7 @@ description: Find what a repository should work on next and hand back one copy-p
 
 ## Prompt format
 
-Put each prompt in its own fenced block. Each prompt stands alone, because the thread it starts gets nothing else. Aim for 120 to 300 words for a single PR, and up to 400 for a program.
+Put each prompt in its own fenced block. Each prompt stands alone, because the thread it starts gets nothing else. Aim for 120 to 300 words for a single PR, and up to 400 for a program. The fixed Performance and Ship steps lines below don't count toward that.
 
 - **First line.** Start with `/p3-mode `. State the job in one sentence with the issue number and how to read it (`gh issue view <n> --comments`).
 - **Decisions.** Write the user's settled calls as "Decision (<name>)" or "Scope (<name>)", including any default you chose for them. Then they can edit it before pasting.
@@ -40,6 +40,11 @@ Put each prompt in its own fenced block. Each prompt stands alone, because the t
   - Role-based tests wherever data access changes.
 - **Repository rules.** Restate the ones that cost most when missed, even if AGENTS.md or memory already has them: protected databases, runtime pins, migration ordering, recipe updates.
 - **Model routing.** Add a line from `p3-models.md` (project root, else `~/.agents/p3-models.md`) or memory, for example "UI work stays on Claude models".
+- **Performance.** Include this line in every prompt: "Performance (<name>): fix performance problems you find in the code and tests this change already touches, in this PR. An improvement never brings another file or feature into scope, and its own follow-ons don't either. List anything further in the PR body as a follow-up."
+- **Ship steps.** Put this block in every prompt, just before the gate. Set `<base>` to the PR's base branch: trunk, or the feature branch for a program slice.
+  - "Before opening the PR, run `sol-loop` on the full diff. It counts as /ship-it's independent pre-push review."
+  - "Once the review bots are clean, comment `@greptileai review` on the PR and triage its findings like theirs."
+  - "Right before the squash merge, `git fetch origin` and check `git merge-base --is-ancestor origin/<base> <PR head SHA>`. If another agent merged into <base> since, merge it into the branch, rerun the checks the merge affects, push, and merge only on green CI for the new head. Repeat the check until <base> hasn't moved."
 - **Gate.** End every prompt with `/ship-it`.
   - If a schema change needs a migration someone applies separately, put this sentence before `/ship-it`: "The PR body must tell <name> to apply the migration before merge. Stop before merging so they can."
 - **Program.** For a spec split into slices:
