@@ -45,7 +45,7 @@ missing or pre-failing checks in the brief.
 
 ## 2. Start Sol
 
-In T3, use the Sol entry in `p3-models.md` (project root, else
+In T3, unless the user named a Sol version, use the Sol entry in `p3-models.md` (project root, else
 `~/.agents/p3-models.md`) and pass its effort and pinned options as
 `target.options`. With no Sol entry, call `orchestrator_capabilities` and
 pick the latest Sol unless the user named a version, on the standard speed

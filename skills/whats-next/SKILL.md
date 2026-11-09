@@ -39,7 +39,7 @@ Put each prompt in its own fenced block. Each prompt stands alone, because the t
   - The real-surface proof the repository requires: its verify command, viewport widths, loading and error states.
   - Role-based tests wherever data access changes.
 - **Repository rules.** Restate the ones that cost most when missed, even if AGENTS.md or memory already has them: protected databases, runtime pins, migration ordering, recipe updates.
-- **No model routing.** Name no model, provider, reasoning level or speed tier. `/p3-mode` picks every model from `p3-models.md` (project root, else `~/.agents/p3-models.md`), so a prompt that names one overrides it.
+- **No model routing.** Never tell the thread which model, provider, reasoning level or speed tier to run on. Naming one the task itself is about is fine. `/p3-mode` picks every model from `p3-models.md` (project root, else `~/.agents/p3-models.md`), so a prompt that names one overrides it.
 - **Performance.** Include this line in every prompt: "Performance (<name>): fix performance problems you find in the code and tests this change already touches, in this PR. An improvement never brings another file or feature into scope, and its own follow-ons don't either. List anything further in the PR body as a follow-up."
 - **Ship steps.** Put this block in every prompt, just before the gate. Set `<base>` to the PR's base branch: trunk, or the feature branch for a program slice.
   - "Before opening the PR, run `sol-loop` on the full diff. It counts as /ship-it's independent pre-push review."
