@@ -45,8 +45,11 @@ missing or pre-failing checks in the brief.
 
 ## 2. Start Sol
 
-In T3, call `orchestrator_capabilities`. Pick the latest Sol unless the user
-named a version. Do not hardcode an ID. Record provider, model, and effort
+In T3, unless the user named a Sol version, use the Sol entry in `p3-models.md` (project root, else
+`~/.agents/p3-models.md`) and pass its effort and pinned options as
+`target.options`. With no Sol entry, call `orchestrator_capabilities` and
+pick the latest Sol unless the user named a version, on the standard speed
+tier. Do not hardcode an ID. Record provider, model, and effort
 only if exposed. Use `delegate_task` every round (`role: "review"`,
 `mode: "async"`). Save `taskId`. New `clientRequestId` per round.
 `childThreadId` is storage, not the next target. Do not use

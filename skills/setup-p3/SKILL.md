@@ -24,6 +24,7 @@ Call `orchestrator_capabilities`. It lists the provider instances and models you
 - **Version.** Match the version the user named exactly. "V4.1 Flash" never resolves to `V4 Flash`. A name that matches nothing, or matches several versions, gets asked about with the candidates listed.
 - **Instance.** One model can appear under several instances, such as GPT Sol under both `codex` and `opencode` (prefixed `openai/`). Prefer the maker's native instance over an aggregator, and say which you picked. Two instances of one provider, such as `claudeAgent` and a second Claude instance, are separate accounts and a real choice. Ask once and apply the answer to every entry from that provider.
 - **Reasoning.** The option id differs per provider (`effort`, `reasoningEffort`, `variant`), and so does the spelling of its values (`xhigh`, `Xhigh`). Match the level case-insensitively and write the value as the catalog spells it. If the model lacks the named level, flag it and list the levels it has. Never move it to a neighbor silently. A model with no reasoning options takes no effort token.
+- **Speed tier.** Fast or priority modes (`serviceTier`, `fastMode`) burn quota several times faster. Pin each entry to the standard tier explicitly (`serviceTier=default`, `fastMode=false`) so a child never inherits the parent's fast setting. When the user names fast mode, pin the fast value instead.
 - **Confirm.** Show the resolved pool in the entry format from step 5. Ask only about flagged entries.
 
 ### 4. Map roles and confirm
@@ -38,11 +39,12 @@ Show every role with its value, and list each line step 1 dropped. Ask whether t
 
 ### 5. Validate and write the file
 
-Every real entry written must be in the `orchestrator_capabilities` result, under the provider instance it resolved to, with a reasoning value that model exposes. `inherit-parent` always passes. If a chosen entry is not available, stop and ask again. Then write `p3-models.md` with a `# pool:` line listing the resolved pool entries, comma separated, and one line per role, using the same labels p3-mode uses. Write each entry as `<providerInstanceId>/<model> (<effort>)`, leaving off the effort when the model has no reasoning options. Overwrite the whole file so re-runs stay idempotent. Shape:
+Every real entry written must be in the `orchestrator_capabilities` result, under the provider instance it resolved to, with a reasoning value that model exposes. `inherit-parent` always passes. If a chosen entry is not available, stop and ask again. Then write `p3-models.md` with a `# pool:` line listing the resolved pool entries, comma separated, and one line per role, using the same labels p3-mode uses. Write each entry as `<providerInstanceId>/<model> (<effort>, <option>=<value>)`, for example `<providerInstanceId>/<model> (high, serviceTier=default)`, leaving off the effort when the model has no reasoning options and adding each pinned option after it. Overwrite the whole file so re-runs stay idempotent. Shape:
 
 ```
 # p3 model configuration. One line per role. Delete a line to fall back to the skill default.
 # `inherit-parent` as a value: the role runs on the parent thread's model (omit the delegate_task model). Entries in a panel list still count toward its fan-out.
+# Pass everything in an entry's parentheses to delegate_task as target.options: the effort under the model's reasoning option id, each `<option>=<value>` as written. Never drop one.
 # pool: <entry>, <entry>, <entry>
 feature, refactoring: <entry>
 bug-fix: <entry>
