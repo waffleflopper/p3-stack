@@ -39,11 +39,12 @@ Show every role with its value, and list each line step 1 dropped. Ask whether t
 
 ### 5. Validate and write the file
 
-Every real entry written must be in the `orchestrator_capabilities` result, under the provider instance it resolved to, with a reasoning value that model exposes. `inherit-parent` always passes. If a chosen entry is not available, stop and ask again. Then write `p3-models.md` with a `# pool:` line listing the resolved pool entries, comma separated, and one line per role, using the same labels p3-mode uses. Write each entry as `<providerInstanceId>/<model> (<effort>, <option>=<value>)`, for example `codex/gpt-6.1-sol (high, serviceTier=default)`, leaving off the effort when the model has no reasoning options and adding each pinned option after it. Overwrite the whole file so re-runs stay idempotent. Shape:
+Every real entry written must be in the `orchestrator_capabilities` result, under the provider instance it resolved to, with a reasoning value that model exposes. `inherit-parent` always passes. If a chosen entry is not available, stop and ask again. Then write `p3-models.md` with a `# pool:` line listing the resolved pool entries, comma separated, and one line per role, using the same labels p3-mode uses. Write each entry as `<providerInstanceId>/<model> (<effort>, <option>=<value>)`, for example `<providerInstanceId>/<model> (high, serviceTier=default)`, leaving off the effort when the model has no reasoning options and adding each pinned option after it. Overwrite the whole file so re-runs stay idempotent. Shape:
 
 ```
 # p3 model configuration. One line per role. Delete a line to fall back to the skill default.
 # `inherit-parent` as a value: the role runs on the parent thread's model (omit the delegate_task model). Entries in a panel list still count toward its fan-out.
+# Pass everything in an entry's parentheses to delegate_task as target.options: the effort under the model's reasoning option id, each `<option>=<value>` as written. Never drop one.
 # pool: <entry>, <entry>, <entry>
 feature, refactoring: <entry>
 bug-fix: <entry>
