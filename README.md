@@ -38,7 +38,7 @@ The [guide](docs/guide/README.md) walks through setup, the mode, and each skill 
 
 ## Skills
 
-architect, arena, automate-me, benchmark-checklist, blast-radius, bro, correct, create-verification-skill, figure-it-out, full-send, full-stop, how, in-your-own-words, interrogate, ketchup, ketchup-video, maintain-verification-skill, make-bot-ui, no-comments, p3-help, recall, reflect, setup-p3, sharpen, ship-it, show-me, show-me-your-work, sol-loop, swarm, tdd, teach, technical-writing, typescript-best-practices, unslop, whats-next, why.
+architect, arena, automate-me, benchmark-checklist, blast-radius, bro, correct, create-verification-skill, figure-it-out, full-send, full-stop, how, in-your-own-words, interrogate, ketchup, ketchup-video, maintain-verification-skill, make-bot-ui, no-comments, p3-help, p3-mode, recall, reflect, setup-p3, sharpen, ship-it, show-me, show-me-your-work, sol-loop, swarm, tdd, teach, technical-writing, typescript-best-practices, unslop, whats-next, why.
 
 ## Principles
 
