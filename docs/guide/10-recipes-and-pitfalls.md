@@ -18,7 +18,15 @@ Mechanics first, history second. Each skill's report tells you which sources it 
 /p3-mode read this thread. restate the underlying issue in your own words, in plain english. don't change any code yet.
 ```
 
-A misreading shows up in the restatement, where it costs one message to correct. Keep your own theory to yourself until the agent has stated its own.
+A misreading shows up in the restatement, where it costs one message to correct. Keep your own theory to yourself until the agent has stated its own. `/in-your-own-words` asks for the restatement alone, with no playbook.
+
+## Sharpen a prompt before you send it
+
+```text
+/sharpen write the onboarding doc for the new billing service.
+```
+
+The agent names what an expert would do that you didn't ask for, the raw material they'd start from, their methods and tools, and an outside check that the result is right. It hands back your prompt rewritten to ask for that and doesn't do the task. Send the rewrite when it reads right.
 
 ## Prototype before you pick
 
@@ -133,6 +141,24 @@ You rarely need more words. You need the right name, and [the principles page](.
 ```
 
 That's the whole prompt. [`/bro`](../../skills/bro/SKILL.md) restates the last message like one human talking to another, no jargon, shorter. Use it when a reply is technically thorough and you still don't know what it said.
+
+## Catch up on a thread you left running
+
+```text
+/ketchup
+```
+
+[`/ketchup`](../../skills/ketchup/SKILL.md) tells you in plain words what changed since your last message, then lists each call waiting on you with its pick, evidence, and risk. It changes nothing while it reports.
+
+To watch the catch-up instead, run [`/ketchup-video`](../../skills/ketchup-video/SKILL.md). It shows what happened in a short subtitled video of slides, and lists the calls waiting on you as text under it. It needs a local renderer and `ffmpeg`.
+
+## See it instead of reading it
+
+```text
+/show-me how a save moves from the UI to the daemon.
+```
+
+[`/show-me`](../../skills/show-me/SKILL.md) picks the smallest view that makes the point, such as pseudocode, a call tree, a file tree, a Mermaid diagram, or a focused HTML page.
 
 ## The pitfalls
 
