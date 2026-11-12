@@ -48,6 +48,8 @@ Before applying any Accepted edit, present the synthesizer's full Accepted/Rejec
 
 Backlog items file to whatever devex / backlog tracker your team uses automatically. Only the Accepted list waits for approval.
 
+Skills install as symlinks into this repo, so an edit goes live for every agent at once. Before approval, show the source path in this checkout that each edit touches. After approval, edit that source. Never commit, open a PR, or push.
+
 For each approved Accepted item, follow the Routing field exactly:
 
 - Trivial existing-skill edit (a one-line bullet, a tightened sentence, a stale fact corrected): parent does directly.

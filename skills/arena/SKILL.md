@@ -34,11 +34,11 @@ Spawn all N candidates in one turn with `delegate_task`, one per runner entry, e
 
 Each rationale names the alternatives the candidate considered and what it rejected.
 
-Drain the candidates with `task_status`. If a candidate fails to produce output, proceed with N-1 and note the dropout in the synthesis record.
+Drain the candidates with `task_status`. If a candidate fails to produce output, proceed with N-1 and note the dropout in the synthesis record. If dropouts leave fewer than two candidates, spawn replacements up to two.
 
 ## Phase C: Cross-judge
 
-After all Phase B candidates complete, choose one model from the `arena cross-judge pool` line in `p3-models.md`. Prefer a different provider from the parent's. Spawn one judge with `delegate_task` on that model. The brief says read-only: inspect only, no writes. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
+After all Phase B candidates complete, choose one model from the `arena cross-judge pool` line in `p3-models.md`. The judge is never on the parent's provider. Try only entries on another provider, in pool order. An `inherit-parent` or `auto` entry is the parent model, so it never judges. If no entry on another provider runs, skip the judge, pick the base alone in Phase D, and say so. Spawn one judge with `delegate_task` on that model. The brief says read-only: inspect only, no writes. It sees the rubric and the candidates by path label, scores each criterion, and recommends a base with rationale. It runs in parallel with the parent's reading in Phase D, not with the candidates themselves. Don't spawn the judge while candidates are still writing.
 
 ## Phase D: Pick a base
 
@@ -68,4 +68,4 @@ If verification surfaces a problem the arena did not catch, either Phase A was w
 
 ## Outputs
 
-One synthesized artifact. One short synthesis note alongside, naming the base, the grafts (with source candidate), the rejections, the dropouts if any, and the verification result.
+One synthesized artifact. One short synthesis note alongside, naming the base, the cross-judge's verdict or that Phase C skipped the judge, the grafts (with source candidate), the rejections, the dropouts if any, and the verification result.

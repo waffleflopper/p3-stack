@@ -30,6 +30,7 @@ const PLACEHOLDER_PROSE = /<[A-Za-z][^<>`]*>/;
 const PLACEHOLDER_CODE =
 	/^<(path|command|media path|execution playbook|each other leaf skill the program uses)>$|^<slug>\.png$|^<media path>/;
 const BOX = /^\s*- \[[ x]\] (.*)$/;
+const CODE_SPAN = /(?<!`)(`+)(?!`)(.*?)(?<!`)\1(?!`)/g;
 
 const file = process.argv[2];
 if (!file) {
@@ -47,22 +48,42 @@ if (raw[0] === "---") {
 }
 
 const lines = [];
-let fence = false;
+let fence = null;
+const openingFence = (text) => {
+	const match = text.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+	if (!match || (match[1][0] === "`" && match[2].includes("`"))) return null;
+	return { char: match[1][0], length: match[1].length };
+};
+const closingFence = (text, opening) => {
+	const match = text.match(/^ {0,3}(`+|~+)[ \t]*$/);
+	return Boolean(
+		match &&
+		match[1][0] === opening.char &&
+		match[1].length >= opening.length,
+	);
+};
 for (let i = start; i < raw.length; i++) {
 	const text = raw[i];
 	const n = i + 1;
-	if (/^```/.test(text)) fence = !fence;
-	lines.push({ n, text, code: fence });
-	if (fence) continue;
+	let code = Boolean(fence);
+	if (fence && closingFence(text, fence)) {
+		code = false;
+		fence = null;
+	} else if (!fence) {
+		fence = openingFence(text);
+		code = Boolean(fence);
+	}
+	lines.push({ n, text, code });
+	if (code) continue;
 	const prose = text
-		.replace(/`[^`]*`/g, "`")
+		.replace(CODE_SPAN, "`")
 		.replace(/!\[[^\]]*\]\([^)]*\)/g, "")
 		.replace(/\]\([^)]*\)/g, "]");
 	if (/[–—]/.test(prose)) fail(n, "long dash");
 	if (/[‘’“”]/.test(prose)) fail(n, "curly quote");
 	if (/: \S/.test(prose)) fail(n, "mid-sentence colon");
 	if (PLACEHOLDER_PROSE.test(prose)) fail(n, "unfilled placeholder");
-	else if ([...text.matchAll(/`([^`]*)`/g)].some((m) => PLACEHOLDER_CODE.test(m[1]))) fail(n, "unfilled placeholder");
+	else if ([...text.matchAll(CODE_SPAN)].some((m) => PLACEHOLDER_CODE.test(m[2].trim()))) fail(n, "unfilled placeholder");
 }
 
 const h2 = (l) => (!l.code && l.text.startsWith("## ") ? l.text.slice(3).trim() : null);
