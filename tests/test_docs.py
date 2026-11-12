@@ -10,7 +10,7 @@ ABSENT = {"loop"}
 SMALL = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split()
 TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
 # "The twenty-three playbooks" claims the whole set. "Three playbooks scale it up" names a subset, so it is not checked.
-CLAIM = re.compile(r"\b(?:(all|has|of|ships|the|with) )?(\d+|[a-z]+(?:-[a-z]+)?) (short |principle )?(skills|principles|playbooks|agents)\b", re.I)
+CLAIM = re.compile(r"\b(?:(all|has|of|ships|the|with) )?(\d+|[a-z]+(?:-[a-z]+)?) (short )?(principle )?(skills|principles|playbooks|agents)\b", re.I)
 SLASH = re.compile(r"(?:^|(?<=[\s`(|\"']))/([a-z][a-z0-9-]*)(?![\w/<-])", re.M)
 LINK = re.compile(r"\]\(<?([^)\s>]+)>?(?:\s+\"[^\"]*\")?\)")
 FENCE = re.compile(r"^\s*(```|~~~)")
@@ -127,10 +127,10 @@ class DocsMatchTreeTest(unittest.TestCase):
         for doc in self.docs:
             text = read(doc)
             for m in CLAIM.finditer(text):
-                whole, word, qualifier, noun = m.groups()
+                whole, word, short, principle, noun = m.groups()
                 claimed = to_number(word)
-                kind = "principles" if qualifier else noun.lower()
-                if (whole or qualifier) and claimed is not None and claimed not in expected[kind]:
+                kind = "principles" if short or principle else noun.lower()
+                if (whole or short) and claimed is not None and claimed not in expected[kind]:
                     bad.append(f'{doc}:{line_of(text, m.start())} says "{m.group(0)}", but the tree has {expected[kind]}')
         self.assertEqual(bad, [])
 
