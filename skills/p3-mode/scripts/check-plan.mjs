@@ -30,6 +30,7 @@ const PLACEHOLDER_PROSE = /<[A-Za-z][^<>`]*>/;
 const PLACEHOLDER_CODE =
 	/^<(path|command|media path|execution playbook|each other leaf skill the program uses)>$|^<slug>\.png$|^<media path>/;
 const BOX = /^\s*- \[[ x]\] (.*)$/;
+const CODE_SPAN = /(?<!`)(`+)(?!`)(.*?)(?<!`)\1(?!`)/g;
 
 const file = process.argv[2];
 if (!file) {
@@ -75,14 +76,14 @@ for (let i = start; i < raw.length; i++) {
 	lines.push({ n, text, code });
 	if (code) continue;
 	const prose = text
-		.replace(/(?<!`)(`+)(?!`)(.*?)(?<!`)\1(?!`)/g, "`")
+		.replace(CODE_SPAN, "`")
 		.replace(/!\[[^\]]*\]\([^)]*\)/g, "")
 		.replace(/\]\([^)]*\)/g, "]");
 	if (/[–—]/.test(prose)) fail(n, "long dash");
 	if (/[‘’“”]/.test(prose)) fail(n, "curly quote");
 	if (/: \S/.test(prose)) fail(n, "mid-sentence colon");
 	if (PLACEHOLDER_PROSE.test(prose)) fail(n, "unfilled placeholder");
-	else if ([...text.matchAll(/`([^`]*)`/g)].some((m) => PLACEHOLDER_CODE.test(m[1]))) fail(n, "unfilled placeholder");
+	else if ([...text.matchAll(CODE_SPAN)].some((m) => PLACEHOLDER_CODE.test(m[2].trim()))) fail(n, "unfilled placeholder");
 }
 
 const h2 = (l) => (!l.code && l.text.startsWith("## ") ? l.text.slice(3).trim() : null);

@@ -49,7 +49,7 @@ The program runs `skills/p3-mode/playbooks/<execution playbook>.md`. <Who merges
 
 ### Verdict and merge, for every PR
 - [ ] At the code-ready head SHA and at each later push that changes the patch, run the swarm per `skills/swarm/SKILL.md`. One gates lane. The ten live lanes from the PR's **Verify, live** block. The perf lane from its **Verify, perf** block. Two or more audit lanes, each with its own focus, that read the diff and the receipts and distrust the PR body. The root audits the receipts in the merge-ready report before the verdict.
-- [ ] Clean only when every lane is `PASS`. Only a problem a lane can show blocks, with a failing run at the head, a failed gate, a bug a user would hit, or a doc line the PR made wrong. Blocking findings go back to the owner, and everything else goes in a follow-up. A later head gets the check its change size calls for per `playbooks/autopilot-full.md` step 4, and a fresh verdict, except for results that stay valid under the patch-id rule in `playbooks/shipping.md`.
+- [ ] Clean only when every lane is `PASS`. Only a problem a lane can show blocks, with a failing run at the head, a failed gate, a bug a user would hit, a security or privacy exposure, or a doc line the PR made wrong. Blocking findings go back to the owner, and everything else goes in a follow-up. A later head gets the check its change size calls for per `playbooks/autopilot-full.md` step 4, and a fresh verdict, except for results that stay valid under the patch-id rule in `playbooks/shipping.md`.
 - [ ] <The merge or append rule from the execution playbook, with the patch-id rule from `playbooks/shipping.md`.>
 
 ### Boot recipe, for every live lane

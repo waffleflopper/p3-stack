@@ -101,6 +101,11 @@ class CheckPlanFenceTest(unittest.TestCase):
             delimiter = "`" * count
             self.assertClean(f"Use {delimiter}echo `x`: “quoted” — example{delimiter}.\n")
 
+    def test_flags_placeholders_inside_multi_backtick_spans(self):
+        self.assertFlags("Run ``<command>`` here.\n", "unfilled placeholder")
+        self.assertFlags("Run `<command>` here.\n", "unfilled placeholder")
+        self.assertClean("Run ``echo `x` `` here.\n")
+
     def test_checks_prose_after_a_multi_backtick_span_and_unmatched_delimiters(self):
         self.assertFlags("Use ``echo `x`: y``. Bad: prose.\n", "mid-sentence colon")
         self.assertFlags("Use ``unclosed: bad` here.\n", "mid-sentence colon")
